@@ -7,18 +7,11 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Install Dependencies') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/YOUR_USERNAME/flask-ci-cd-demo.git'
-            }
-        }
-
-        stage('Setup Python Environment') {
-            steps {
-                sh '''
+                bat '''
                 python -m venv venv
-                . venv/bin/activate
+                call venv\\Scripts\\activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
@@ -27,8 +20,8 @@ pipeline {
 
         stage('Run Unit Tests') {
             steps {
-                sh '''
-                . venv/bin/activate
+                bat '''
+                call venv\\Scripts\\activate
                 pytest
                 '''
             }
@@ -36,18 +29,18 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh '''
-                . venv/bin/activate
-                python setup.py sdist
+                bat '''
+                if not exist build mkdir build
+                xcopy app build\\app /E /I /Y
                 '''
             }
         }
 
         stage('Simulate Deployment') {
             steps {
-                sh '''
-                mkdir -p /tmp/flask_deploy
-                cp -r app /tmp/flask_deploy/
+                bat '''
+                if not exist C:\\tmp\\ssd_deploy mkdir C:\\tmp\\ssd_deploy
+                xcopy build C:\\tmp\\ssd_deploy /E /I /Y
                 '''
             }
         }
@@ -55,10 +48,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'Pipeline completed successfully'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline failed'
         }
         always {
             cleanWs()
