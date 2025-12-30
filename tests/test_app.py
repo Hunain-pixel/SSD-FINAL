@@ -4,4 +4,5 @@ def test_home():
     client = app.test_client()
     response = client.get("/")
     assert response.status_code == 200
-    assert b"Flask CI/CD Pipeline" in response.data
+    assert b"SSD Final Flask App" in response.data
+
